@@ -103,7 +103,7 @@ Please execute the following script to perform this configuration:
 
 **Modify AWS env vars to include AWS_KEY, AWS_SECRET and S3 buckets names for both clusters:
 
-vi files/federation/06-obserrvability.sh
+vi files/federation/06-observability.sh
 
 sh files/federation/06-observability.sh
 ```
