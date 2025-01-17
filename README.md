@@ -2,7 +2,7 @@
 
 This document collects a set of procedures to install Openshift Service Mesh 3 (TP1) in two Opeshift Clusters and configure a federation mesh between them.
 
-This guide is designed to install the Istio control plane on both cluster1 and cluster2 implementing a multi-primary architecture, making each a primary cluster. Both clusters reside on the network1 network, meaning there is direct connectivity between the pods in both clusters.
+This guide is designed to install the Istio control plane on both cluster01 and cluster02 implementing a multi-primary architecture, making each a primary cluster. Both clusters reside on the network1 and network2, meaning there is direct connectivity between the pods in both clusters.
 
 ## Prerequisites
 

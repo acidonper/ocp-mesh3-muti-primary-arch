@@ -12,19 +12,20 @@ else
   echo "Cluster 1 Kubectl Context: ${CTX_CLUSTER1} or Cluster 2 Kubectl Context: ${CTX_CLUSTER2} are defined"
 fi
 
+# Please not change NETWORK and ZONE values
 
-ZONE=mesh01
-NET=net01
+ZONE=mesh1
+NET=network1
 REGION=cluster01
 CP_NAME=istio-system-${REGION}
-CP_VERSION=v1.23.0
-
+CP_VERSION=v1.24.1
 
 oc get operators servicemeshoperator3.openshift-operators --context="${CTX_CLUSTER1}"
 
 [[ $? -eq 0 ]] || { echo >&2 "It is required to have Service Mesh 3 operator already installed in Openshift"; exit 1; }
 
-oc label namespace ${CP_NAME} istio-discovery=enabled --context="${CTX_CLUSTER1}"
+# oc label namespace ${CP_NAME} istio-discovery=enabled --context="${CTX_CLUSTER1}"
+oc --context="${CTX_CLUSTER1}" label namespace ${CP_NAME} topology.istio.io/network=${NET}
 
 oc new-project istio-cni --context="${CTX_CLUSTER1}"
 
@@ -37,6 +38,8 @@ spec:
   namespace: istio-cni
   version: ${CP_VERSION}
 EOF
+
+sleep 10
 
 oc apply --context="${CTX_CLUSTER1}" -f - <<EOF
 apiVersion: sailoperator.io/v1alpha1
@@ -57,7 +60,7 @@ spec:
       meshID: ${ZONE}
       multiCluster:
         clusterName: ${REGION}
-      network: ${NET01}
+      network: ${NET}
     pilot:
       resources:
         requests:
@@ -65,6 +68,11 @@ spec:
           memory: 1024Mi
 EOF
 
+oc --context "${CTX_CLUSTER1}" wait --for condition=Ready istio/${CP_NAME} --timeout=3m
+
+oc apply -f files/config/gws-cluster01.yaml -n ${CP_NAME} --context="${CTX_CLUSTER1}"
+
+sleep 30
 
 oc new-project bookinfo --context="${CTX_CLUSTER1}"
 oc label namespace bookinfo istio-discovery=enabled istio.io/rev=${CP_NAME} --context="${CTX_CLUSTER1}"

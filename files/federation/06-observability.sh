@@ -392,7 +392,7 @@ oc get operators kiali-ossm.openshift-operators --context ${CTX_CLUSTER1}
 oc get operators kiali-ossm.openshift-operators --context ${CTX_CLUSTER2}
 [[ $? -eq 0 ]] || { echo >&2 "It is required to have kiali-ossm.openshift-operators operator already installed in Openshift (cluster02)"; exit 1; }
 
-cat <<EOF > /tmp/rolebindingkiali.yaml
+cat <<EOF > /tmp/rolebindingkiali01.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -404,11 +404,26 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kiali-service-account
-  namespace: istio-system
+  namespace: istio-system-cluster01
 EOF
 
-cat /tmp/rolebindingkiali.yaml | oc apply --context ${CTX_CLUSTER1} -f -
-cat /tmp/rolebindingkiali.yaml | oc apply --context ${CTX_CLUSTER2} -f -
+cat <<EOF > /tmp/rolebindingkiali02.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kiali-monitoring-rbac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-monitoring-view
+subjects:
+- kind: ServiceAccount
+  name: kiali-service-account
+  namespace: istio-system-cluster02
+EOF
+
+cat /tmp/rolebindingkiali01.yaml | oc apply --context ${CTX_CLUSTER1} -f -
+cat /tmp/rolebindingkiali02.yaml | oc apply --context ${CTX_CLUSTER2} -f -
 
 
 cat <<EOF > /tmp/kiali-cluster01.yaml

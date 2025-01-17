@@ -119,5 +119,5 @@ oc --context ${CTX_CLUSTER1} label namespace istio-system-cluster01 topology.ist
 oc get secret -n istio-system-cluster01 --context ${CTX_CLUSTER1} cacerts || oc create secret generic cacerts -n istio-system-cluster01 --context ${CTX_CLUSTER1} --from-file=/tmp/cluster01/ca-cert.pem --from-file=/tmp/cluster01/ca-key.pem --from-file=/tmp/cluster01/root-cert.pem --from-file=/tmp/cluster01/cert-chain.pem
 
 oc get project istio-system-cluster02 --context ${CTX_CLUSTER2} || oc new-project istio-system-cluster02 --context ${CTX_CLUSTER2}
-oc --context ${CTX_CLUSTER2} label namespace istio-system-cluster02 topology.istio.io/network=network1
+oc --context ${CTX_CLUSTER2} label namespace istio-system-cluster02 topology.istio.io/network=network2
 oc get secret -n istio-system-cluster02 --context ${CTX_CLUSTER2} cacerts || oc create secret generic cacerts -n istio-system-cluster02 --context ${CTX_CLUSTER2} --from-file=/tmp/cluster02/ca-cert.pem --from-file=/tmp/cluster02/ca-key.pem --from-file=/tmp/cluster02/root-cert.pem --from-file=/tmp/cluster02/cert-chain.pem
